@@ -1,6 +1,7 @@
 ﻿namespace GestaoDeRestaurante.Models
 {
-    public class AtendimentoPresencial
+    public class AtendimentoPresencial : Atendimento
     {
+
     }
 }
