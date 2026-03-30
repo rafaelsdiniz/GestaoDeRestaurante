@@ -11,4 +11,5 @@ namespace GestaoDeRestaurante.Models
         [Column(TypeName = "decimal(10,2)")]
         public decimal TaxaEntrega { get; set; }
         public Pedido? Pedido { get; set; }
+    }
 }

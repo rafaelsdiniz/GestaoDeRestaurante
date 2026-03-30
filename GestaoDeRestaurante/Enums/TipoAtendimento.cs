@@ -2,7 +2,7 @@
 
 namespace GestaoDeRestaurante.Enums
 {
-    public class TipoAtendimento
+    public enum TipoAtendimento
     {
         AtendimentoPresencial = 1,
         DeliveryProprio = 2,

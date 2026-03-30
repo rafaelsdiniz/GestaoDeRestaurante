@@ -1,0 +1,15 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(dotnet build:*)",
+      "Bash(dotnet add:*)",
+      "Bash(dotnet restore:*)",
+      "Read(//c/Users/DINIZ/Desktop/Curso-Csharp/GestaoDeRestaurante/GestaoDeRestaurante/$USERPROFILE/.nuget/packages/microsoft.openapi/2.4.1/**)",
+      "Read(//c/Users/DINIZ/.nuget/packages/microsoft.openapi/2.4.1/lib/**)",
+      "Bash(dotnet --version)",
+      "Bash(grep -o Microsoft.OpenApi.[A-Za-z.]* C:/Users/DINIZ/.nuget/packages/microsoft.openapi/2.4.1/lib/net8.0/Microsoft.OpenApi.xml)",
+      "Bash(grep -o Microsoft.OpenApi.[A-Za-z]* C:/Users/DINIZ/.nuget/packages/microsoft.openapi/2.4.1/lib/net8.0/Microsoft.OpenApi.xml)",
+      "Bash(dotnet ef:*)"
+    ]
+  }
+}

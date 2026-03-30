@@ -1,4 +1,4 @@
-﻿using GestaoDeRestaurante.Enums;
+using GestaoDeRestaurante.Enums;
 
 namespace GestaoDeRestaurante.DTOs.Reserva
 {
@@ -8,8 +8,8 @@ namespace GestaoDeRestaurante.DTOs.Reserva
         public DateTime DataHoraReserva { get; set; }
         public int QuantidadePessoas { get; set; }
         public StatusReserva StatusReserva { get; set; }
-
-        public string NomeUsuario { get; set; }
+        public string? CodigoConfirmacao { get; set; }
+        public string NomeUsuario { get; set; } = string.Empty;
         public int NumeroMesa { get; set; }
     }
 }

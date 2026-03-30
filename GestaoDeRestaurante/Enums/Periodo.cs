@@ -1,6 +1,6 @@
 ﻿namespace GestaoDeRestaurante.Enums
 {
-    public class Periodo
+    public enum Periodo
     {
         Almoco = 1,
         Jantar = 2
