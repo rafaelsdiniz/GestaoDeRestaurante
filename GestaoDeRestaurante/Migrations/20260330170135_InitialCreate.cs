@@ -19,7 +19,10 @@ namespace GestaoDeRestaurante.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     TipoAtendimento = table.Column<int>(type: "int", nullable: false),
                     DataHora = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    TaxaEntrega = table.Column<decimal>(type: "decimal(10,2)", nullable: false)
+                    TaxaEntrega = table.Column<decimal>(type: "decimal(10,2)", nullable: false),
+                    Discriminator = table.Column<string>(type: "nvarchar(80)", maxLength: 80, nullable: false),
+                    ObservacaoEntrega = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    NomeAplicativo = table.Column<string>(type: "nvarchar(80)", maxLength: 80, nullable: true)
                 },
                 constraints: table =>
                 {

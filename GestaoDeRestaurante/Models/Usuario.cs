@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using GestaoDeRestaurante.Enums;
 
 namespace GestaoDeRestaurante.Models
 {
@@ -16,6 +17,8 @@ namespace GestaoDeRestaurante.Models
         [Required]
         [StringLength(200)]
         public string Senha {  get; set; } = string.Empty;
+
+        public TipoUsuario TipoUsuario { get; set; } = TipoUsuario.Cliente;
 
         public List<Endereco> Enderecos { get; set; } = new();
         public List<Pedido> Pedidos { get; set; } = new();

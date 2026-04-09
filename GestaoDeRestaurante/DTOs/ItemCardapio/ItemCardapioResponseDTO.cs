@@ -15,6 +15,8 @@ namespace GestaoDeRestaurante.DTOs.ItemCardapio
 
         public bool EhSugestaoDoChefe { get; set; }
 
+        public string? ImagemBase64 { get; set; }
+
         public List<string> Ingredientes { get; set; }
     }
 }

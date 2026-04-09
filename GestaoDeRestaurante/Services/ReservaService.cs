@@ -25,10 +25,10 @@ namespace GestaoDeRestaurante.Services
             if (mesa == null)
                 throw new Exception("Mesa não encontrada.");
 
-            // Reservas só são para jantar (19h–22h)
+            // Reservas/agendamentos só são para almoço (11h–14h)
             var hora = dto.DataHoraReserva.Hour;
-            if (hora < 19 || hora >= 22)
-                throw new Exception("Reservas só podem ser feitas entre 19h e 22h (jantar).");
+            if (hora < 11 || hora >= 14)
+                throw new Exception("Reservas só podem ser feitas entre 11h e 14h (almoço).");
 
             // Antecedência mínima de 1 dia
             if (dto.DataHoraReserva.Date <= DateTime.Today)

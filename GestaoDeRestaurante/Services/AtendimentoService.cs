@@ -87,6 +87,30 @@ namespace GestaoDeRestaurante.Services
             };
         }
 
+        public async Task<AtendimentoResponseDTO> AtualizarAtendimento(int id, AtendimentoRequestDTO dto)
+        {
+            var atendimento = await _context.Atendimentos.FindAsync(id);
+            if (atendimento == null)
+                throw new Exception("Atendimento nao encontrado.");
+
+            atendimento.TipoAtendimento = dto.TipoAtendimento;
+
+            if (atendimento is AtendimentoDeliveryProprio deliveryProprio)
+                deliveryProprio.ObservacaoEntrega = dto.ObservacaoEntrega;
+            else if (atendimento is AtendimentoDeliveryAplicativo deliveryApp)
+                deliveryApp.NomeAplicativo = dto.NomeAplicativo ?? "App";
+
+            await _context.SaveChangesAsync();
+
+            return new AtendimentoResponseDTO
+            {
+                Id = atendimento.Id,
+                TipoAtendimento = atendimento.TipoAtendimento,
+                DataHora = atendimento.DataHora,
+                TaxaEntrega = atendimento.TaxaEntrega
+            };
+        }
+
         // 🔹 DELETE (opcional)
         public async Task<bool> DeletarAtendimento(int id)
         {

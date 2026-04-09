@@ -20,6 +20,8 @@ namespace GestaoDeRestaurante.Models
         [Column(TypeName = "decimal(10,2)")]
         public decimal Total { get; set; }
 
+        public StatusPedido Status { get; set; } = StatusPedido.Recebido;
+
         public int UsuarioId { get; set; }
         public Usuario? Usuario { get; set; }
 

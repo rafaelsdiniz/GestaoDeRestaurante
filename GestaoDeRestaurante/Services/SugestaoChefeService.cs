@@ -85,6 +85,34 @@ namespace GestaoDeRestaurante.Services
             };
         }
 
+        public async Task<SugestaoChefeResponseDTO> AtualizarSugestaoDoChefe(int id, SugestaoChefeRequestDTO dto)
+        {
+            var sugestao = await _context.SugestoesChefe.FindAsync(id);
+            if (sugestao == null)
+                throw new Exception("Sugestao nao encontrada.");
+
+            var item = await _context.ItensCardapio.FirstOrDefaultAsync(i => i.Id == dto.ItemCardapioId);
+            if (item == null)
+                throw new Exception("Item do cardapio nao encontrado.");
+
+            if (item.Periodo != dto.Periodo)
+                throw new Exception("O item nao pertence ao periodo informado.");
+
+            sugestao.DataSugestao = dto.DataSugestao;
+            sugestao.Periodo = dto.Periodo;
+            sugestao.ItemCardapioId = dto.ItemCardapioId;
+
+            await _context.SaveChangesAsync();
+
+            return new SugestaoChefeResponseDTO
+            {
+                Id = sugestao.Id,
+                DataSugestao = sugestao.DataSugestao,
+                Periodo = sugestao.Periodo,
+                NomeItem = item.Nome
+            };
+        }
+
         public async Task<bool> DeletarSugestaoDoChefe(int id)
         {
             var sugestao = await _context.SugestoesChefe.FindAsync(id);

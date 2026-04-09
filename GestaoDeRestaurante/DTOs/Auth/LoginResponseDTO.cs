@@ -6,5 +6,6 @@ namespace GestaoDeRestaurante.DTOs.Auth
         public string NomeUsuario { get; set; } = string.Empty;
         public string Email { get; set; } = string.Empty;
         public int UsuarioId { get; set; }
+        public string TipoUsuario { get; set; } = string.Empty;
     }
 }

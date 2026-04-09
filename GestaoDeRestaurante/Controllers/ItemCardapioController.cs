@@ -1,5 +1,6 @@
 ﻿using GestaoDeRestaurante.DTOs.ItemCardapio;
 using GestaoDeRestaurante.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace GestaoDeRestaurante.Controllers
@@ -16,6 +17,7 @@ namespace GestaoDeRestaurante.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Administrador")]
         public async Task<IActionResult> CriarItemCardapio(ItemCardapioRequestDTO dto)
             => Ok(await _service.CriarItemCardapio(dto));
 
@@ -28,10 +30,12 @@ namespace GestaoDeRestaurante.Controllers
             => Ok(await _service.BuscarItemCardapioPorId(id));
 
         [HttpPut("{id}")]
+        [Authorize(Roles = "Administrador")]
         public async Task<IActionResult> AtualizarItemCardapio(int id, ItemCardapioRequestDTO dto)
             => Ok(await _service.AtualizarItemCardapio(id, dto));
 
         [HttpDelete("{id}")]
+        [Authorize(Roles = "Administrador")]
         public async Task<IActionResult> DeletarItemCardapio(int id)
             => Ok(await _service.DeletarItemCardapio(id));
     }

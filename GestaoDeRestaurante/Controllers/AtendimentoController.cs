@@ -1,11 +1,13 @@
 ﻿using GestaoDeRestaurante.DTOs.Atendimento;
 using GestaoDeRestaurante.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace GestaoDeRestaurante.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
+    [Authorize(Roles = "Administrador")]
     public class AtendimentoController : ControllerBase
     {
         private readonly AtendimentoService _service;
@@ -26,6 +28,10 @@ namespace GestaoDeRestaurante.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> BuscarAtendimentoPorId(int id)
             => Ok(await _service.BuscarAtendimentoPorId(id));
+
+        [HttpPut("{id}")]
+        public async Task<IActionResult> AtualizarAtendimento(int id, AtendimentoRequestDTO dto)
+            => Ok(await _service.AtualizarAtendimento(id, dto));
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeletarAtendimento(int id)

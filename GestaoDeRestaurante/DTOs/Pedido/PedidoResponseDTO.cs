@@ -1,4 +1,5 @@
-﻿using GestaoDeRestaurante.Enums;
+﻿using GestaoDeRestaurante.DTOs.ItemPedido;
+using GestaoDeRestaurante.Enums;
 
 namespace GestaoDeRestaurante.DTOs.Pedido
 {
@@ -12,10 +13,11 @@ namespace GestaoDeRestaurante.DTOs.Pedido
         public decimal Desconto { get; set; }
         public decimal TaxaEntrega { get; set; }
         public decimal Total { get; set; }
+        public string Status { get; set; } = string.Empty;
 
         public string NomeUsuario { get; set; }
         public string TipoAtendimento { get; set; }
 
-        public List<string> Itens { get; set; }
+        public List<ItemPedidoResponseDTO> Itens { get; set; }
     }
 }

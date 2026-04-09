@@ -9,7 +9,32 @@
       "Bash(dotnet --version)",
       "Bash(grep -o Microsoft.OpenApi.[A-Za-z.]* C:/Users/DINIZ/.nuget/packages/microsoft.openapi/2.4.1/lib/net8.0/Microsoft.OpenApi.xml)",
       "Bash(grep -o Microsoft.OpenApi.[A-Za-z]* C:/Users/DINIZ/.nuget/packages/microsoft.openapi/2.4.1/lib/net8.0/Microsoft.OpenApi.xml)",
-      "Bash(dotnet ef:*)"
+      "Bash(dotnet ef:*)",
+      "Bash(find /c/Users/DINIZ/Desktop/Curso-Csharp/GestaoDeRestaurante -not -path */obj/* -not -path */bin/* -type f)",
+      "Bash(dotnet run:*)",
+      "Bash(echo \"---exit: $?\")",
+      "Bash(mkdir -p /tmp/hashtest)",
+      "Read(//tmp/**)",
+      "Bash(dotnet new:*)",
+      "Bash(taskkill:*)",
+      "Bash(dotnet script:*)",
+      "Bash(dotnet tool:*)",
+      "Bash(timeout 5)",
+      "Bash(curl -s http://localhost:5000/api/auth/login)",
+      "Bash(curl -s http://localhost:5252/api/auth/login)",
+      "Bash(findstr :5252)",
+      "Bash(curl:*)",
+      "Bash(sqlcmd:*)",
+      "Bash(dotnet clean:*)",
+      "Bash(netstat -ano)",
+      "Bash(wmic process:*)",
+      "Bash(powershell -Command \"Stop-Process -Id 26464 -Force\")",
+      "Bash(tasklist)",
+      "Bash(findstr \"dotnet\")",
+      "Bash(powershell -Command \"Stop-Process -Id 24780 -Force\")",
+      "Bash(timeout /t 5)",
+      "Bash(findstr:*)",
+      "Bash(powershell -Command \"Get-Process dotnet | Stop-Process -Force\")"
     ]
   }
 }

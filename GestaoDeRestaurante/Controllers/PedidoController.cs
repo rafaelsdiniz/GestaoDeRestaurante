@@ -1,11 +1,13 @@
 ﻿using GestaoDeRestaurante.DTOs.Pedido;
 using GestaoDeRestaurante.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace GestaoDeRestaurante.Controllers
 {
     [ApiController]
     [Route("api/usuarios/{usuarioId}/pedidos")]
+    [Authorize]
     public class PedidoController : ControllerBase
     {
         private readonly PedidoService _service;

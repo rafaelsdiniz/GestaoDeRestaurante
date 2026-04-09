@@ -1,4 +1,5 @@
 using GestaoDeRestaurante.Data;
+using GestaoDeRestaurante.DTOs.ItemPedido;
 using GestaoDeRestaurante.DTOs.Pedido;
 using GestaoDeRestaurante.Enums;
 using GestaoDeRestaurante.Models;
@@ -146,10 +147,17 @@ namespace GestaoDeRestaurante.Services
                 Desconto = pedido.Desconto,
                 TaxaEntrega = pedido.TaxaEntrega,
                 Total = pedido.Total,
+                Status = pedido.Status.ToString(),
                 NomeUsuario = pedido.Usuario!.Nome,
                 TipoAtendimento = pedido.Atendimento!.TipoAtendimento.ToString(),
                 Itens = pedido.ItensPedidos
-                    .Select(ip => ip.ItemCardapio!.Nome)
+                    .Select(ip => new ItemPedidoResponseDTO
+                    {
+                        NomeItem = ip.ItemCardapio!.Nome,
+                        Quantidade = ip.Quantidade,
+                        PrecoUnitario = ip.PrecoUnitario,
+                        Subtotal = ip.Subtotal
+                    })
                     .ToList()
             };
         }

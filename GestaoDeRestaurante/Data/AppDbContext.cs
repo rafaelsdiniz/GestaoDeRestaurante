@@ -18,5 +18,28 @@ namespace GestaoDeRestaurante.Data
         public DbSet<SugestaoChefe> SugestoesChefe { get; set; }
         public DbSet<Pedido> Pedidos { get; set; }
         public DbSet<ItemPedido> ItensPedidos { get; set; }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
+
+            modelBuilder.Entity<ItemCardapio>().ToTable("ItensCardapio");
+
+            modelBuilder.Entity<Atendimento>()
+                .Property<string>("Discriminator")
+                .HasMaxLength(80);
+
+            modelBuilder.Entity<Atendimento>()
+                .ToTable("Atendimentos")
+                .HasDiscriminator<string>("Discriminator")
+                .HasValue<Atendimento>("Atendimento")
+                .HasValue<AtendimentoPresencial>("AtendimentoPresencial")
+                .HasValue<AtendimentoDeliveryProprio>("AtendimentoDeliveryProprio")
+                .HasValue<AtendimentoDeliveryAplicativo>("AtendimentoDeliveryAplicativo");
+
+            modelBuilder.Entity<AtendimentoDeliveryAplicativo>()
+                .Property(a => a.NomeAplicativo)
+                .HasMaxLength(80);
+        }
     }
 }

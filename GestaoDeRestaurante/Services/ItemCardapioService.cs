@@ -29,7 +29,8 @@ namespace GestaoDeRestaurante.Services
                 Nome = dto.Nome,
                 Descricao = dto.Descricao,
                 PrecoBase = dto.PrecoBase,
-                Periodo = dto.Periodo
+                Periodo = dto.Periodo,
+                ImagemBase64 = dto.ImagemBase64
             };
 
             _context.ItensCardapio.Add(item);
@@ -98,6 +99,7 @@ namespace GestaoDeRestaurante.Services
             item.Descricao = dto.Descricao;
             item.PrecoBase = dto.PrecoBase;
             item.Periodo = dto.Periodo;
+            item.ImagemBase64 = dto.ImagemBase64;
 
             var antigos = _context.ItemIngredientes.Where(ii => ii.ItemCardapioId == id);
             _context.ItemIngredientes.RemoveRange(antigos);
@@ -155,6 +157,7 @@ namespace GestaoDeRestaurante.Services
                 Descricao = item.Descricao,
                 PrecoBase = item.PrecoBase,
                 Periodo = item.Periodo,
+                ImagemBase64 = item.ImagemBase64,
                 EhSugestaoDoChefe = ehSugestao,
                 Ingredientes = item.ItensIngredientes
                     .Select(ii => ii.Ingrediente!.Nome)

@@ -19,6 +19,8 @@ namespace GestaoDeRestaurante.DTOs.ItemCardapio
         [Required]
         public Periodo Periodo { get; set; }
 
+        public string? ImagemBase64 { get; set; }
+
         public List<int>? IngredientesIds { get; set; }
     }
 }

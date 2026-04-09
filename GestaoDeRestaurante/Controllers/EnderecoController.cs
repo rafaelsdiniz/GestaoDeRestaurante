@@ -1,11 +1,13 @@
 ﻿using GestaoDeRestaurante.DTOs.Endereco;
 using GestaoDeRestaurante.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace GestaoDeRestaurante.Controllers
 {
     [ApiController]
     [Route("api/usuarios/{usuarioId}/enderecos")]
+    [Authorize]
     public class EnderecoController : ControllerBase
     {
         private readonly EnderecoService _service;

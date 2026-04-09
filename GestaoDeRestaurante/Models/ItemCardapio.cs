@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace GestaoDeRestaurante.Models
 {
+    [Table("ItensCardapio")]
     public class ItemCardapio : BaseEntity
     {
         [Required]
@@ -19,6 +20,9 @@ namespace GestaoDeRestaurante.Models
 
         [Required]
         public Periodo Periodo { get; set; }
+
+        [Column(TypeName = "TEXT")]
+        public string? ImagemBase64 { get; set; }
 
         public List<ItemIngrediente> ItensIngredientes { get; set; } = new();
         public List<ItemPedido> ItensPedidos { get; set; } = new();

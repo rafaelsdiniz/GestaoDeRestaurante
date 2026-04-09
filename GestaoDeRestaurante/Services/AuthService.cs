@@ -35,7 +35,8 @@ namespace GestaoDeRestaurante.Services
                 Token = token,
                 NomeUsuario = usuario.Nome,
                 Email = usuario.Email,
-                UsuarioId = usuario.Id
+                UsuarioId = usuario.Id,
+                TipoUsuario = usuario.TipoUsuario.ToString()
             };
         }
 
@@ -51,7 +52,8 @@ namespace GestaoDeRestaurante.Services
             {
                 new Claim(ClaimTypes.NameIdentifier, usuario.Id.ToString()),
                 new Claim(ClaimTypes.Email, usuario.Email),
-                new Claim(ClaimTypes.Name, usuario.Nome)
+                new Claim(ClaimTypes.Name, usuario.Nome),
+                new Claim(ClaimTypes.Role, usuario.TipoUsuario.ToString())
             };
 
             var expiresInHours = _configuration.GetValue<int>("Jwt:ExpiresInHours", 24);

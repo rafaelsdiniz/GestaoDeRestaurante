@@ -36,6 +36,18 @@ namespace GestaoDeRestaurante.Migrations
                     b.Property<DateTime>("DataHora")
                         .HasColumnType("datetime2");
 
+                    b.Property<string>("Discriminator")
+                        .IsRequired()
+                        .HasMaxLength(80)
+                        .HasColumnType("nvarchar(80)");
+
+                    b.Property<string>("NomeAplicativo")
+                        .HasMaxLength(80)
+                        .HasColumnType("nvarchar(80)");
+
+                    b.Property<string>("ObservacaoEntrega")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<decimal>("TaxaEntrega")
                         .HasColumnType("decimal(10,2)");
 
@@ -44,7 +56,30 @@ namespace GestaoDeRestaurante.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasDiscriminator<string>("Discriminator").HasValue("Atendimento");
+
                     b.ToTable("Atendimentos");
+                });
+
+            modelBuilder.Entity("GestaoDeRestaurante.Models.AtendimentoDeliveryAplicativo", b =>
+                {
+                    b.HasBaseType("GestaoDeRestaurante.Models.Atendimento");
+
+                    b.HasDiscriminator().HasValue("AtendimentoDeliveryAplicativo");
+                });
+
+            modelBuilder.Entity("GestaoDeRestaurante.Models.AtendimentoDeliveryProprio", b =>
+                {
+                    b.HasBaseType("GestaoDeRestaurante.Models.Atendimento");
+
+                    b.HasDiscriminator().HasValue("AtendimentoDeliveryProprio");
+                });
+
+            modelBuilder.Entity("GestaoDeRestaurante.Models.AtendimentoPresencial", b =>
+                {
+                    b.HasBaseType("GestaoDeRestaurante.Models.Atendimento");
+
+                    b.HasDiscriminator().HasValue("AtendimentoPresencial");
                 });
 
             modelBuilder.Entity("GestaoDeRestaurante.Models.Endereco", b =>

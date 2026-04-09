@@ -1,11 +1,13 @@
 ﻿using GestaoDeRestaurante.DTOs.Reserva;
 using GestaoDeRestaurante.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace GestaoDeRestaurante.Controllers
 {
     [ApiController]
     [Route("api/usuarios/{usuarioId}/reservas")]
+    [Authorize]
     public class ReservaController : ControllerBase
     {
         private readonly ReservaService _service;
