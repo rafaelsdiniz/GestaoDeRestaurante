@@ -27,16 +27,15 @@ builder.Services.AddScoped<RelatorioService>();
 builder.Services.AddScoped<MesaService>();
 builder.Services.AddScoped<IngredienteService>();
 
-// 🔥 CORS (React na porta 5173)
+// CORS
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("ReactPolicy", policy =>
     {
         policy
-            .WithOrigins("http://localhost:5173")
+            .AllowAnyOrigin()
             .AllowAnyMethod()
-            .AllowAnyHeader()
-            .AllowCredentials(); // pode remover se não usar cookie/token em header custom
+            .AllowAnyHeader();
     });
 });
 
@@ -101,7 +100,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-// 🔥 ATIVA O CORS AQUI (ordem importa!)
+// CORS
 app.UseCors("ReactPolicy");
 
 app.UseAuthentication();

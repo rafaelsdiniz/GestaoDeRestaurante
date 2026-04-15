@@ -30,6 +30,7 @@ namespace GestaoDeRestaurante.Services
                 Descricao = dto.Descricao,
                 PrecoBase = dto.PrecoBase,
                 Periodo = dto.Periodo,
+                Categoria = dto.Categoria,
                 ImagemBase64 = dto.ImagemBase64
             };
 
@@ -41,6 +42,14 @@ namespace GestaoDeRestaurante.Services
                 var ingredientes = await _context.Ingredientes
                     .Where(i => dto.IngredientesIds.Contains(i.Id))
                     .ToListAsync();
+
+                // Valida que todos os IDs de ingredientes existem
+                if (ingredientes.Count != dto.IngredientesIds.Distinct().Count())
+                {
+                    var idsEncontrados = ingredientes.Select(i => i.Id).ToList();
+                    var idsNaoEncontrados = dto.IngredientesIds.Distinct().Where(id => !idsEncontrados.Contains(id)).ToList();
+                    throw new Exception($"Os seguintes IDs de ingredientes não foram encontrados: {string.Join(", ", idsNaoEncontrados)}.");
+                }
 
                 foreach (var ingrediente in ingredientes)
                 {
@@ -59,13 +68,38 @@ namespace GestaoDeRestaurante.Services
 
         public async Task<List<ItemCardapioResponseDTO>> ListarItensCardapio()
         {
-            var itens = await _context.ItensCardapio.ToListAsync();
+            var hoje = DateTime.Now.Date;
 
-            var lista = new List<ItemCardapioResponseDTO>();
-            foreach (var item in itens)
-                lista.Add(await MapToResponse(item.Id));
+            var itens = await _context.ItensCardapio
+                .Include(i => i.ItensIngredientes)
+                    .ThenInclude(ii => ii.Ingrediente)
+                .ToListAsync();
 
-            return lista;
+            var sugestoesHoje = await _context.SugestoesChefe
+                .Where(s => s.DataSugestao.Date == hoje)
+                .Select(s => new { s.ItemCardapioId, s.Periodo })
+                .ToListAsync();
+
+            return itens.Select(item =>
+            {
+                var ehSugestao = sugestoesHoje.Any(s =>
+                    s.ItemCardapioId == item.Id && s.Periodo == item.Periodo);
+
+                return new ItemCardapioResponseDTO
+                {
+                    Id = item.Id,
+                    Nome = item.Nome,
+                    Descricao = item.Descricao,
+                    PrecoBase = item.PrecoBase,
+                    Periodo = item.Periodo,
+                    Categoria = item.Categoria,
+                    ImagemBase64 = item.ImagemBase64,
+                    EhSugestaoDoChefe = ehSugestao,
+                    Ingredientes = item.ItensIngredientes
+                        .Select(ii => ii.Ingrediente!.Nome)
+                        .ToList()
+                };
+            }).ToList();
         }
 
         public async Task<ItemCardapioResponseDTO> BuscarItemCardapioPorId(int id)
@@ -99,6 +133,7 @@ namespace GestaoDeRestaurante.Services
             item.Descricao = dto.Descricao;
             item.PrecoBase = dto.PrecoBase;
             item.Periodo = dto.Periodo;
+            item.Categoria = dto.Categoria;
             item.ImagemBase64 = dto.ImagemBase64;
 
             var antigos = _context.ItemIngredientes.Where(ii => ii.ItemCardapioId == id);
@@ -157,6 +192,7 @@ namespace GestaoDeRestaurante.Services
                 Descricao = item.Descricao,
                 PrecoBase = item.PrecoBase,
                 Periodo = item.Periodo,
+                Categoria = item.Categoria,
                 ImagemBase64 = item.ImagemBase64,
                 EhSugestaoDoChefe = ehSugestao,
                 Ingredientes = item.ItensIngredientes

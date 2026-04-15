@@ -1,7 +1,8 @@
-﻿using GestaoDeRestaurante.DTOs.Endereco;
+using GestaoDeRestaurante.DTOs.Endereco;
 using GestaoDeRestaurante.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace GestaoDeRestaurante.Controllers
 {
@@ -19,22 +20,93 @@ namespace GestaoDeRestaurante.Controllers
 
         [HttpPost]
         public async Task<IActionResult> CriarEndereco(int usuarioId, EnderecoRequestDTO dto)
-            => Ok(await _service.CriarEndereco(usuarioId, dto));
+        {
+            try
+            {
+                if (!UsuarioAutorizado(usuarioId))
+                    return Forbid();
+
+                var resultado = await _service.CriarEndereco(usuarioId, dto);
+                return Ok(resultado);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { mensagem = ex.Message });
+            }
+        }
 
         [HttpGet]
         public async Task<IActionResult> ListarEnderecoPorUsuario(int usuarioId)
-            => Ok(await _service.ListarEnderecoPorUsuario(usuarioId));
+        {
+            try
+            {
+                if (!UsuarioAutorizado(usuarioId))
+                    return Forbid();
+
+                return Ok(await _service.ListarEnderecoPorUsuario(usuarioId));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { mensagem = ex.Message });
+            }
+        }
 
         [HttpGet("{id}")]
-        public async Task<IActionResult> BuscarEnderecoPorId(int id)
-            => Ok(await _service.BuscarEnderecoPorId(id));
+        public async Task<IActionResult> BuscarEnderecoPorId(int usuarioId, int id)
+        {
+            try
+            {
+                if (!UsuarioAutorizado(usuarioId))
+                    return Forbid();
+
+                return Ok(await _service.BuscarEnderecoPorId(id));
+            }
+            catch (Exception ex)
+            {
+                return NotFound(new { mensagem = ex.Message });
+            }
+        }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> AtualizarEndereco(int id, EnderecoRequestDTO dto)
-            => Ok(await _service.AtualizarEndereco(id, dto));
+        public async Task<IActionResult> AtualizarEndereco(int usuarioId, int id, EnderecoRequestDTO dto)
+        {
+            try
+            {
+                if (!UsuarioAutorizado(usuarioId))
+                    return Forbid();
+
+                return Ok(await _service.AtualizarEndereco(id, dto));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { mensagem = ex.Message });
+            }
+        }
 
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeletarEndereco(int id)
-            => Ok(await _service.DeletarEndereco(id));
+        public async Task<IActionResult> DeletarEndereco(int usuarioId, int id)
+        {
+            try
+            {
+                if (!UsuarioAutorizado(usuarioId))
+                    return Forbid();
+
+                await _service.DeletarEndereco(id);
+                return Ok(new { mensagem = "Endereço removido com sucesso." });
+            }
+            catch (Exception ex)
+            {
+                return NotFound(new { mensagem = ex.Message });
+            }
+        }
+
+        private bool UsuarioAutorizado(int usuarioId)
+        {
+            if (User.IsInRole("Administrador"))
+                return true;
+
+            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            return userIdClaim != null && int.Parse(userIdClaim) == usuarioId;
+        }
     }
 }

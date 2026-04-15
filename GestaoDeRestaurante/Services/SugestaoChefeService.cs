@@ -16,14 +16,6 @@ namespace GestaoDeRestaurante.Services
 
         public async Task<SugestaoChefeResponseDTO> CriarSugestaoDoChefe(SugestaoChefeRequestDTO dto)
         {
-            var existe = await _context.SugestoesChefe.AnyAsync(s =>
-                s.DataSugestao.Date == dto.DataSugestao.Date &&
-                s.Periodo == dto.Periodo
-            );
-
-            if (existe)
-                throw new Exception("Já existe uma sugestão para este período neste dia.");
-
             var item = await _context.ItensCardapio
                 .FirstOrDefaultAsync(i => i.Id == dto.ItemCardapioId);
 
@@ -32,6 +24,26 @@ namespace GestaoDeRestaurante.Services
 
             if (item.Periodo != dto.Periodo)
                 throw new Exception("O item não pertence ao período informado.");
+
+            // Se já existe sugestão para este dia e período, atualiza em vez de criar nova
+            var sugestaoExistente = await _context.SugestoesChefe.FirstOrDefaultAsync(s =>
+                s.DataSugestao.Date == dto.DataSugestao.Date &&
+                s.Periodo == dto.Periodo
+            );
+
+            if (sugestaoExistente != null)
+            {
+                sugestaoExistente.ItemCardapioId = dto.ItemCardapioId;
+                await _context.SaveChangesAsync();
+
+                return new SugestaoChefeResponseDTO
+                {
+                    Id = sugestaoExistente.Id,
+                    DataSugestao = sugestaoExistente.DataSugestao,
+                    Periodo = sugestaoExistente.Periodo,
+                    NomeItem = item.Nome
+                };
+            }
 
             var sugestao = new SugestaoChefe
             {
@@ -89,14 +101,24 @@ namespace GestaoDeRestaurante.Services
         {
             var sugestao = await _context.SugestoesChefe.FindAsync(id);
             if (sugestao == null)
-                throw new Exception("Sugestao nao encontrada.");
+                throw new Exception("Sugestão não encontrada.");
 
             var item = await _context.ItensCardapio.FirstOrDefaultAsync(i => i.Id == dto.ItemCardapioId);
             if (item == null)
-                throw new Exception("Item do cardapio nao encontrado.");
+                throw new Exception("Item do cardápio não encontrado.");
 
             if (item.Periodo != dto.Periodo)
-                throw new Exception("O item nao pertence ao periodo informado.");
+                throw new Exception("O item não pertence ao período informado.");
+
+            // Verifica se já existe outra sugestão para o mesmo dia e período
+            var conflito = await _context.SugestoesChefe.AnyAsync(s =>
+                s.Id != id &&
+                s.DataSugestao.Date == dto.DataSugestao.Date &&
+                s.Periodo == dto.Periodo
+            );
+
+            if (conflito)
+                throw new Exception("Já existe outra sugestão para este período neste dia.");
 
             sugestao.DataSugestao = dto.DataSugestao;
             sugestao.Periodo = dto.Periodo;

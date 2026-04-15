@@ -1,5 +1,6 @@
 using GestaoDeRestaurante.Data;
 using GestaoDeRestaurante.DTOs.Mesa;
+using GestaoDeRestaurante.Enums;
 using GestaoDeRestaurante.Models;
 using Microsoft.EntityFrameworkCore;
 
@@ -40,7 +41,22 @@ namespace GestaoDeRestaurante.Services
 
         public async Task<List<MesaResponseDTO>> ListarMesasDisponiveis()
         {
-            var mesas = await _context.Mesas.OrderBy(m => m.Numero).ToListAsync();
+            var hoje = DateTime.Today;
+
+            // IDs de mesas que possuem reserva ativa/confirmada para hoje no horário de almoço
+            var mesasOcupadas = await _context.Reservas
+                .Where(r => r.DataHoraReserva.Date == hoje
+                    && r.StatusReserva != StatusReserva.Cancelada
+                    && r.StatusReserva != StatusReserva.Finalizada)
+                .Select(r => r.MesaId)
+                .Distinct()
+                .ToListAsync();
+
+            var mesas = await _context.Mesas
+                .Where(m => !mesasOcupadas.Contains(m.Id))
+                .OrderBy(m => m.Numero)
+                .ToListAsync();
+
             return mesas.Select(MapToResponse).ToList();
         }
 
@@ -59,6 +75,10 @@ namespace GestaoDeRestaurante.Services
             if (mesa == null)
                 throw new Exception("Mesa não encontrada.");
 
+            var duplicada = await _context.Mesas.AnyAsync(m => m.Numero == dto.Numero && m.Id != id);
+            if (duplicada)
+                throw new Exception("Já existe outra mesa com esse número.");
+
             mesa.Numero = dto.Numero;
             mesa.Capacidade = dto.Capacidade;
             await _context.SaveChangesAsync();
@@ -71,6 +91,14 @@ namespace GestaoDeRestaurante.Services
             var mesa = await _context.Mesas.FindAsync(id);
             if (mesa == null)
                 throw new Exception("Mesa não encontrada.");
+
+            var possuiReservaAtiva = await _context.Reservas.AnyAsync(r =>
+                r.MesaId == id &&
+                r.StatusReserva != StatusReserva.Cancelada &&
+                r.StatusReserva != StatusReserva.Finalizada);
+
+            if (possuiReservaAtiva)
+                throw new Exception("Não é possível remover uma mesa com reservas ativas.");
 
             _context.Mesas.Remove(mesa);
             await _context.SaveChangesAsync();

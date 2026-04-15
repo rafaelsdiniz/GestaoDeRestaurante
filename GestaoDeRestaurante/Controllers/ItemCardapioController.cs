@@ -1,4 +1,4 @@
-﻿using GestaoDeRestaurante.DTOs.ItemCardapio;
+using GestaoDeRestaurante.DTOs.ItemCardapio;
 using GestaoDeRestaurante.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -19,24 +19,70 @@ namespace GestaoDeRestaurante.Controllers
         [HttpPost]
         [Authorize(Roles = "Administrador")]
         public async Task<IActionResult> CriarItemCardapio(ItemCardapioRequestDTO dto)
-            => Ok(await _service.CriarItemCardapio(dto));
+        {
+            try
+            {
+                return Ok(await _service.CriarItemCardapio(dto));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { mensagem = ex.Message });
+            }
+        }
 
         [HttpGet]
         public async Task<IActionResult> ListarItensCardapio()
-            => Ok(await _service.ListarItensCardapio());
+        {
+            try
+            {
+                return Ok(await _service.ListarItensCardapio());
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { mensagem = ex.Message });
+            }
+        }
 
         [HttpGet("{id}")]
         public async Task<IActionResult> BuscarItemCardapioPorId(int id)
-            => Ok(await _service.BuscarItemCardapioPorId(id));
+        {
+            try
+            {
+                return Ok(await _service.BuscarItemCardapioPorId(id));
+            }
+            catch (Exception ex)
+            {
+                return NotFound(new { mensagem = ex.Message });
+            }
+        }
 
         [HttpPut("{id}")]
         [Authorize(Roles = "Administrador")]
         public async Task<IActionResult> AtualizarItemCardapio(int id, ItemCardapioRequestDTO dto)
-            => Ok(await _service.AtualizarItemCardapio(id, dto));
+        {
+            try
+            {
+                return Ok(await _service.AtualizarItemCardapio(id, dto));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { mensagem = ex.Message });
+            }
+        }
 
         [HttpDelete("{id}")]
         [Authorize(Roles = "Administrador")]
         public async Task<IActionResult> DeletarItemCardapio(int id)
-            => Ok(await _service.DeletarItemCardapio(id));
+        {
+            try
+            {
+                await _service.DeletarItemCardapio(id);
+                return Ok(new { mensagem = "Item do cardápio removido com sucesso." });
+            }
+            catch (Exception ex)
+            {
+                return NotFound(new { mensagem = ex.Message });
+            }
+        }
     }
 }

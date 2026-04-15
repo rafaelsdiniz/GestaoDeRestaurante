@@ -13,6 +13,8 @@ namespace GestaoDeRestaurante.DTOs.ItemCardapio
 
         public Periodo Periodo { get; set; }
 
+        public Categoria Categoria { get; set; }
+
         public bool EhSugestaoDoChefe { get; set; }
 
         public string? ImagemBase64 { get; set; }

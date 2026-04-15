@@ -1,6 +1,7 @@
 using GestaoDeRestaurante.DTOs.Auth;
 using GestaoDeRestaurante.DTOs.Usuario;
 using GestaoDeRestaurante.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace GestaoDeRestaurante.Controllers
@@ -19,6 +20,7 @@ namespace GestaoDeRestaurante.Controllers
         }
 
         /// <summary>Realiza login e retorna o token JWT.</summary>
+        [AllowAnonymous]
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginRequestDTO dto)
         {
@@ -34,6 +36,7 @@ namespace GestaoDeRestaurante.Controllers
         }
 
         /// <summary>Cadastra um novo usuário.</summary>
+        [AllowAnonymous]
         [HttpPost("cadastro")]
         public async Task<IActionResult> Cadastro([FromBody] UsuarioRequestDTO dto)
         {

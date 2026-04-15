@@ -15,12 +15,10 @@ namespace GestaoDeRestaurante.Services
             _context = context;
         }
 
-        // 🔹 CREATE
         public async Task<AtendimentoResponseDTO> CriarAtendimento(AtendimentoRequestDTO dto)
         {
             Atendimento atendimento;
 
-            // 🔥 Decide qual tipo criar
             if (dto.TipoAtendimento == TipoAtendimento.AtendimentoPresencial)
             {
                 atendimento = new AtendimentoPresencial();
@@ -56,7 +54,6 @@ namespace GestaoDeRestaurante.Services
             };
         }
 
-        // 🔹 GET ALL
         public async Task<List<AtendimentoResponseDTO>> ListarAtendimentos()
         {
             var atendimentos = await _context.Atendimentos.ToListAsync();
@@ -70,7 +67,6 @@ namespace GestaoDeRestaurante.Services
             }).ToList();
         }
 
-        // 🔹 GET BY ID
         public async Task<AtendimentoResponseDTO> BuscarAtendimentoPorId(int id)
         {
             var atendimento = await _context.Atendimentos.FindAsync(id);
@@ -91,7 +87,7 @@ namespace GestaoDeRestaurante.Services
         {
             var atendimento = await _context.Atendimentos.FindAsync(id);
             if (atendimento == null)
-                throw new Exception("Atendimento nao encontrado.");
+                throw new Exception("Atendimento não encontrado.");
 
             atendimento.TipoAtendimento = dto.TipoAtendimento;
 
@@ -111,7 +107,6 @@ namespace GestaoDeRestaurante.Services
             };
         }
 
-        // 🔹 DELETE (opcional)
         public async Task<bool> DeletarAtendimento(int id)
         {
             var atendimento = await _context.Atendimentos.FindAsync(id);

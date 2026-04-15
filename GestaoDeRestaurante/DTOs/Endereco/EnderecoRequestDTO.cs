@@ -24,7 +24,7 @@ namespace GestaoDeRestaurante.DTOs.Endereco
         public string Cidade { get; set; }
 
         [Required]
-        [StringLength(2)]
+        [StringLength(2, MinimumLength = 2, ErrorMessage = "O estado deve ter exatamente 2 caracteres.")]
         public string Estado { get; set; }
 
         [Required]

@@ -34,7 +34,11 @@
       "Bash(powershell -Command \"Stop-Process -Id 24780 -Force\")",
       "Bash(timeout /t 5)",
       "Bash(findstr:*)",
-      "Bash(powershell -Command \"Get-Process dotnet | Stop-Process -Force\")"
+      "Bash(powershell -Command \"Get-Process dotnet | Stop-Process -Force\")",
+      "Bash(kill %1)",
+      "Bash(wait)",
+      "Bash(ls *.slnx)",
+      "Bash(grep -i \"urls\\\\|port\\\\|localhost\" GestaoDeRestaurante/appsettings*.json)"
     ]
   }
 }

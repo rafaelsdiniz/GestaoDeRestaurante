@@ -21,6 +21,9 @@ namespace GestaoDeRestaurante.Models
         [Required]
         public Periodo Periodo { get; set; }
 
+        [Required]
+        public Categoria Categoria { get; set; }
+
         [Column(TypeName = "TEXT")]
         public string? ImagemBase64 { get; set; }
 

@@ -18,22 +18,68 @@ namespace GestaoDeRestaurante.Controllers
 
         [HttpPost]
         public async Task<IActionResult> CriarIngrediente([FromBody] string nome)
-            => Ok(await _service.CriarIngrediente(nome));
+        {
+            try
+            {
+                return Ok(await _service.CriarIngrediente(nome));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { mensagem = ex.Message });
+            }
+        }
 
         [HttpGet]
         public async Task<IActionResult> ListarIngredientes()
-            => Ok(await _service.ListarIngredientes());
+        {
+            try
+            {
+                return Ok(await _service.ListarIngredientes());
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { mensagem = ex.Message });
+            }
+        }
 
         [HttpGet("{id}")]
         public async Task<IActionResult> BuscarIngredientePorId(int id)
-            => Ok(await _service.BuscarIngredientePorId(id));
+        {
+            try
+            {
+                return Ok(await _service.BuscarIngredientePorId(id));
+            }
+            catch (Exception ex)
+            {
+                return NotFound(new { mensagem = ex.Message });
+            }
+        }
 
         [HttpPut("{id}")]
         public async Task<IActionResult> AtualizarIngrediente(int id, [FromBody] string nome)
-            => Ok(await _service.AtualizarIngrediente(id, nome));
+        {
+            try
+            {
+                return Ok(await _service.AtualizarIngrediente(id, nome));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { mensagem = ex.Message });
+            }
+        }
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeletarIngrediente(int id)
-            => Ok(await _service.DeletarIngrediente(id));
+        {
+            try
+            {
+                await _service.DeletarIngrediente(id);
+                return Ok(new { mensagem = "Ingrediente removido com sucesso." });
+            }
+            catch (Exception ex)
+            {
+                return NotFound(new { mensagem = ex.Message });
+            }
+        }
     }
 }
