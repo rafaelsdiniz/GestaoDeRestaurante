@@ -13,6 +13,8 @@ namespace GestaoDeRestaurante.DTOs.Admin
         public string UsuarioNome { get; set; } = string.Empty;
         public string UsuarioEmail { get; set; } = string.Empty;
         public string TipoAtendimento { get; set; } = string.Empty;
+        public string? ObservacaoEntrega { get; set; }
+        public string? EnderecoEntrega { get; set; }
         public List<ItemPedidoAdminDTO> Itens { get; set; } = new();
     }
 

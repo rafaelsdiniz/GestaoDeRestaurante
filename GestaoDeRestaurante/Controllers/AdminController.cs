@@ -175,6 +175,8 @@ namespace GestaoDeRestaurante.Controllers
                         UsuarioNome = p.Usuario.Nome,
                         UsuarioEmail = p.Usuario.Email,
                         TipoAtendimento = p.Atendimento.TipoAtendimento.ToString(),
+                        ObservacaoEntrega = p.Atendimento.ObservacaoEntrega,
+                        EnderecoEntrega = p.Atendimento.ObservacaoEntrega,
                         Itens = p.ItensPedidos.Select(ip => new ItemPedidoAdminDTO
                         {
                             ItemCardapioNome = ip.ItemCardapio.Nome,
@@ -239,6 +241,8 @@ namespace GestaoDeRestaurante.Controllers
                         UsuarioNome = p.Usuario.Nome,
                         UsuarioEmail = p.Usuario.Email,
                         TipoAtendimento = p.Atendimento.TipoAtendimento.ToString(),
+                        ObservacaoEntrega = p.Atendimento.ObservacaoEntrega,
+                        EnderecoEntrega = p.Atendimento.ObservacaoEntrega,
                         Itens = p.ItensPedidos.Select(ip => new ItemPedidoAdminDTO
                         {
                             ItemCardapioNome = ip.ItemCardapio.Nome,

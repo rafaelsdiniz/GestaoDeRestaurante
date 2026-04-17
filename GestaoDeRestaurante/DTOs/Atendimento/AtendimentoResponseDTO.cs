@@ -1,4 +1,4 @@
-﻿using GestaoDeRestaurante.Enums;
+using GestaoDeRestaurante.Enums;
 
 namespace GestaoDeRestaurante.DTOs.Atendimento
 {
@@ -8,5 +8,6 @@ namespace GestaoDeRestaurante.DTOs.Atendimento
         public TipoAtendimento TipoAtendimento { get; set; }
         public DateTime DataHora { get; set; }
         public decimal TaxaEntrega { get; set; }
+        public string? ObservacaoEntrega { get; set; }
     }
 }

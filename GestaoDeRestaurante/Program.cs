@@ -211,8 +211,22 @@ static async Task ExecutarSeedDesenvolvimentoAsync(WebApplication app, AppDbCont
     foreach (var batch in batches.Select(b => b.Trim()).Where(b => !string.IsNullOrWhiteSpace(b)))
     {
         var tabelaInsert = ExtrairTabelaInsert(batch);
+        if (tabelaInsert != null && tabelaInsert.Equals("ItemIngredientes", StringComparison.OrdinalIgnoreCase))
+        {
+            await ExecutarSeedItemIngredientesAsync(context, batch);
+            continue;
+        }
+
         if (tabelaInsert != null && await TabelaTemRegistrosAsync(context, tabelaInsert))
             continue;
+
+        if (tabelaInsert != null && !await DependenciasDoSeedExistemAsync(context, tabelaInsert))
+        {
+            app.Logger.LogWarning(
+                "Seed da tabela {Tabela} ignorado porque os registros relacionados esperados nao existem.",
+                tabelaInsert);
+            continue;
+        }
 
         await context.Database.ExecuteSqlRawAsync(batch);
     }
@@ -240,24 +254,98 @@ static string? ExtrairTabelaInsert(string batch)
     return match.Success ? match.Groups["table"].Value : null;
 }
 
+static async Task ExecutarSeedItemIngredientesAsync(AppDbContext context, string batch)
+{
+    var pares = ExtrairParesItemIngredientes(batch);
+    if (pares.Count == 0)
+        return;
+
+    var values = string.Join(
+        $",{Environment.NewLine}",
+        pares.Select(par => $"({par.ItemCardapioId}, {par.IngredienteId})"));
+
+    var sql = $"""
+        INSERT INTO ItemIngredientes (ItemCardapioId, IngredienteId)
+        SELECT dados.ItemCardapioId, dados.IngredienteId
+        FROM (VALUES
+        {values}
+        ) AS dados(ItemCardapioId, IngredienteId)
+        WHERE EXISTS (
+            SELECT 1
+            FROM ItensCardapio item
+            WHERE item.Id = dados.ItemCardapioId
+        )
+        AND EXISTS (
+            SELECT 1
+            FROM Ingredientes ingrediente
+            WHERE ingrediente.Id = dados.IngredienteId
+        )
+        AND NOT EXISTS (
+            SELECT 1
+            FROM ItemIngredientes itemIngrediente
+            WHERE itemIngrediente.ItemCardapioId = dados.ItemCardapioId
+              AND itemIngrediente.IngredienteId = dados.IngredienteId
+        );
+        """;
+
+    await context.Database.ExecuteSqlRawAsync(sql);
+}
+
+static IReadOnlyList<(int ItemCardapioId, int IngredienteId)> ExtrairParesItemIngredientes(string batch)
+{
+    var indiceValues = batch.IndexOf("VALUES", StringComparison.OrdinalIgnoreCase);
+    var conteudoValues = indiceValues >= 0 ? batch[(indiceValues + "VALUES".Length)..] : batch;
+
+    return Regex.Matches(conteudoValues, @"\(\s*(?<item>\d+)\s*,\s*(?<ingrediente>\d+)\s*\)")
+        .Select(match => (
+            ItemCardapioId: int.Parse(match.Groups["item"].Value),
+            IngredienteId: int.Parse(match.Groups["ingrediente"].Value)))
+        .Distinct()
+        .ToArray();
+}
+
+static async Task<bool> DependenciasDoSeedExistemAsync(AppDbContext context, string tableName)
+{
+    return tableName switch
+    {
+        "Enderecos" => await TodosIdsExistemAsync(context, "Usuarios", new[] { 2, 3, 4, 5 }),
+        "SugestoesChefe" => await TodosIdsExistemAsync(context, "ItensCardapio", new[] { 1, 2, 3, 4, 5, 21, 22, 23, 24, 25, 26 }),
+        "Reservas" => await TodosIdsExistemAsync(context, "Usuarios", new[] { 2, 3, 4, 5 })
+            && await TodosIdsExistemAsync(context, "Mesas", Enumerable.Range(1, 10).ToArray()),
+        "Pedidos" => await TodosIdsExistemAsync(context, "Usuarios", new[] { 2, 3, 4, 5 })
+            && await TodosIdsExistemAsync(context, "Atendimentos", Enumerable.Range(1, 10).ToArray()),
+        "ItensPedidos" => await TodosIdsExistemAsync(context, "Pedidos", Enumerable.Range(1, 10).ToArray())
+            && await TodosIdsExistemAsync(context, "ItensCardapio", new[] { 1, 2, 4, 5, 21, 22, 23, 24 }),
+        _ => true
+    };
+}
+
+static async Task<bool> TodosIdsExistemAsync(AppDbContext context, string tableName, IReadOnlyCollection<int> ids)
+{
+    var idsUnicos = ids.Distinct().ToArray();
+    if (idsUnicos.Length == 0)
+        return true;
+
+    if (!TabelaSeedValida(tableName))
+        return false;
+
+    var idsSql = string.Join(", ", idsUnicos);
+    var sql = $"SELECT COUNT(*) FROM [{tableName}] WHERE [Id] IN ({idsSql})";
+    var connection = context.Database.GetDbConnection();
+
+    if (connection.State != System.Data.ConnectionState.Open)
+        await connection.OpenAsync();
+
+    await using var command = connection.CreateCommand();
+    command.CommandText = sql;
+    var result = await command.ExecuteScalarAsync();
+
+    return Convert.ToInt32(result) == idsUnicos.Length;
+}
+
 static async Task<bool> TabelaTemRegistrosAsync(AppDbContext context, string tableName)
 {
-    var tableNamesValidos = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
-    {
-        "Usuarios",
-        "Enderecos",
-        "Mesas",
-        "Ingredientes",
-        "ItensCardapio",
-        "ItemIngredientes",
-        "SugestoesChefe",
-        "Reservas",
-        "Atendimentos",
-        "Pedidos",
-        "ItensPedidos"
-    };
-
-    if (!tableNamesValidos.Contains(tableName))
+    if (!TabelaSeedValida(tableName))
         return false;
 
     var sql = $"SELECT CASE WHEN EXISTS (SELECT 1 FROM [{tableName}]) THEN CAST(1 AS bit) ELSE CAST(0 AS bit) END";
@@ -271,4 +359,25 @@ static async Task<bool> TabelaTemRegistrosAsync(AppDbContext context, string tab
     var result = await command.ExecuteScalarAsync();
 
     return result is bool hasRows && hasRows;
+}
+
+static bool TabelaSeedValida(string tableName)
+{
+    var tableNamesValidos = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+    {
+        "Usuarios",
+        "Enderecos",
+        "Mesas",
+        "Ingredientes",
+        "ItensCardapio",
+        "ItemIngredientes",
+        "SugestoesChefe",
+        "Reservas",
+        "Atendimentos",
+        "Pedidos",
+        "ItensPedidos",
+        "ConfiguracoesRestaurante"
+    };
+
+    return tableNamesValidos.Contains(tableName);
 }

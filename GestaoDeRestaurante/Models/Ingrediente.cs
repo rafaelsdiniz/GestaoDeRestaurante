@@ -1,4 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
 
 namespace GestaoDeRestaurante.Models
 {
@@ -7,6 +7,9 @@ namespace GestaoDeRestaurante.Models
         [Required]
         [StringLength(100)]
         public string Nome { get; set; } = string.Empty;
+
+        [StringLength(300)]
+        public string? Descricao { get; set; }
 
         public List<ItemIngrediente> ItensIngredientes { get; set; } = new();
     }

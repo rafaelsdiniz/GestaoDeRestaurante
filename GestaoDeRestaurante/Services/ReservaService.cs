@@ -25,14 +25,19 @@ namespace GestaoDeRestaurante.Services
             if (mesa == null)
                 throw new Exception("Mesa não encontrada.");
 
-            // Reservas só são para almoço (11h-14h)
-            var hora = dto.DataHoraReserva.Hour;
-            if (hora < 11 || hora >= 14)
-                throw new Exception("Reservas só podem ser feitas entre 11h e 14h (almoço).");
+            // Busca configuração do restaurante
+            var config = await _context.ConfiguracoesRestaurante.FirstOrDefaultAsync();
+            var reservaInicio = config != null ? TimeSpan.Parse(config.ReservaInicio) : new TimeSpan(11, 0, 0);
+            var reservaFim = config != null ? TimeSpan.Parse(config.ReservaFim) : new TimeSpan(14, 0, 0);
+            var antecedenciaMinima = config?.AntecedenciaMinimaDias ?? 1;
 
-            // Antecedência mínima de 1 dia
-            if (dto.DataHoraReserva.Date <= DateTime.Today)
-                throw new Exception("A reserva deve ser feita com pelo menos 1 dia de antecedência.");
+            var horaReserva = dto.DataHoraReserva.TimeOfDay;
+            if (horaReserva < reservaInicio || horaReserva >= reservaFim)
+                throw new Exception($"Reservas só podem ser feitas entre {reservaInicio:hh\\:mm} e {reservaFim:hh\\:mm}.");
+
+            // Antecedência mínima
+            if (dto.DataHoraReserva.Date < DateTime.Today.AddDays(antecedenciaMinima))
+                throw new Exception($"A reserva deve ser feita com pelo menos {antecedenciaMinima} dia(s) de antecedência.");
 
             if (dto.QuantidadePessoas > mesa.Capacidade)
                 throw new Exception($"Capacidade da mesa excedida. Máximo: {mesa.Capacidade} pessoas.");

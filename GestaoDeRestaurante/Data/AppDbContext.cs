@@ -18,6 +18,7 @@ namespace GestaoDeRestaurante.Data
         public DbSet<SugestaoChefe> SugestoesChefe { get; set; }
         public DbSet<Pedido> Pedidos { get; set; }
         public DbSet<ItemPedido> ItensPedidos { get; set; }
+        public DbSet<ConfiguracaoRestaurante> ConfiguracoesRestaurante { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

@@ -1,4 +1,4 @@
-﻿using GestaoDeRestaurante.Data;
+using GestaoDeRestaurante.Data;
 using GestaoDeRestaurante.DTOs.Atendimento;
 using GestaoDeRestaurante.Enums;
 using GestaoDeRestaurante.Models;
@@ -25,10 +25,7 @@ namespace GestaoDeRestaurante.Services
             }
             else if (dto.TipoAtendimento == TipoAtendimento.DeliveryProprio)
             {
-                atendimento = new AtendimentoDeliveryProprio
-                {
-                    ObservacaoEntrega = dto.ObservacaoEntrega
-                };
+                atendimento = new AtendimentoDeliveryProprio();
             }
             else // DeliveryAplicativo
             {
@@ -39,6 +36,7 @@ namespace GestaoDeRestaurante.Services
             }
 
             atendimento.TipoAtendimento = dto.TipoAtendimento;
+            atendimento.ObservacaoEntrega = dto.ObservacaoEntrega;
             atendimento.DataHora = DateTime.Now;
             atendimento.TaxaEntrega = 0; // será calculado no Pedido
 
@@ -50,7 +48,8 @@ namespace GestaoDeRestaurante.Services
                 Id = atendimento.Id,
                 TipoAtendimento = atendimento.TipoAtendimento,
                 DataHora = atendimento.DataHora,
-                TaxaEntrega = atendimento.TaxaEntrega
+                TaxaEntrega = atendimento.TaxaEntrega,
+                ObservacaoEntrega = atendimento.ObservacaoEntrega
             };
         }
 
@@ -63,7 +62,8 @@ namespace GestaoDeRestaurante.Services
                 Id = a.Id,
                 TipoAtendimento = a.TipoAtendimento,
                 DataHora = a.DataHora,
-                TaxaEntrega = a.TaxaEntrega
+                TaxaEntrega = a.TaxaEntrega,
+                ObservacaoEntrega = a.ObservacaoEntrega
             }).ToList();
         }
 
@@ -79,7 +79,8 @@ namespace GestaoDeRestaurante.Services
                 Id = atendimento.Id,
                 TipoAtendimento = atendimento.TipoAtendimento,
                 DataHora = atendimento.DataHora,
-                TaxaEntrega = atendimento.TaxaEntrega
+                TaxaEntrega = atendimento.TaxaEntrega,
+                ObservacaoEntrega = atendimento.ObservacaoEntrega
             };
         }
 
@@ -90,10 +91,9 @@ namespace GestaoDeRestaurante.Services
                 throw new Exception("Atendimento não encontrado.");
 
             atendimento.TipoAtendimento = dto.TipoAtendimento;
+            atendimento.ObservacaoEntrega = dto.ObservacaoEntrega;
 
-            if (atendimento is AtendimentoDeliveryProprio deliveryProprio)
-                deliveryProprio.ObservacaoEntrega = dto.ObservacaoEntrega;
-            else if (atendimento is AtendimentoDeliveryAplicativo deliveryApp)
+            if (atendimento is AtendimentoDeliveryAplicativo deliveryApp)
                 deliveryApp.NomeAplicativo = dto.NomeAplicativo ?? "App";
 
             await _context.SaveChangesAsync();
@@ -103,7 +103,8 @@ namespace GestaoDeRestaurante.Services
                 Id = atendimento.Id,
                 TipoAtendimento = atendimento.TipoAtendimento,
                 DataHora = atendimento.DataHora,
-                TaxaEntrega = atendimento.TaxaEntrega
+                TaxaEntrega = atendimento.TaxaEntrega,
+                ObservacaoEntrega = atendimento.ObservacaoEntrega
             };
         }
 

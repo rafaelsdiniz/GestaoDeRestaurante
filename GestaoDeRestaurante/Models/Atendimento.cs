@@ -1,4 +1,4 @@
-﻿using GestaoDeRestaurante.Enums;
+using GestaoDeRestaurante.Enums;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace GestaoDeRestaurante.Models
@@ -10,6 +10,7 @@ namespace GestaoDeRestaurante.Models
 
         [Column(TypeName = "decimal(10,2)")]
         public decimal TaxaEntrega { get; set; }
+        public string? ObservacaoEntrega { get; set; }
         public Pedido? Pedido { get; set; }
     }
 }

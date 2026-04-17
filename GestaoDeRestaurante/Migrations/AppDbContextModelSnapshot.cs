@@ -38,6 +38,9 @@ namespace GestaoDeRestaurante.Migrations
                         .HasMaxLength(80)
                         .HasColumnType("nvarchar(80)");
 
+                    b.Property<string>("ObservacaoEntrega")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<decimal>("TaxaEntrega")
                         .HasColumnType("decimal(10,2)");
 
@@ -51,6 +54,52 @@ namespace GestaoDeRestaurante.Migrations
                     b.HasDiscriminator<string>("Discriminator").HasValue("Atendimento");
 
                     b.UseTphMappingStrategy();
+                });
+
+            modelBuilder.Entity("GestaoDeRestaurante.Models.ConfiguracaoRestaurante", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("AlmocoFim")
+                        .IsRequired()
+                        .HasMaxLength(5)
+                        .HasColumnType("nvarchar(5)");
+
+                    b.Property<string>("AlmocoInicio")
+                        .IsRequired()
+                        .HasMaxLength(5)
+                        .HasColumnType("nvarchar(5)");
+
+                    b.Property<int>("AntecedenciaMinimaDias")
+                        .HasColumnType("int");
+
+                    b.Property<string>("JantarFim")
+                        .IsRequired()
+                        .HasMaxLength(5)
+                        .HasColumnType("nvarchar(5)");
+
+                    b.Property<string>("JantarInicio")
+                        .IsRequired()
+                        .HasMaxLength(5)
+                        .HasColumnType("nvarchar(5)");
+
+                    b.Property<string>("ReservaFim")
+                        .IsRequired()
+                        .HasMaxLength(5)
+                        .HasColumnType("nvarchar(5)");
+
+                    b.Property<string>("ReservaInicio")
+                        .IsRequired()
+                        .HasMaxLength(5)
+                        .HasColumnType("nvarchar(5)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("ConfiguracoesRestaurante");
                 });
 
             modelBuilder.Entity("GestaoDeRestaurante.Models.Endereco", b =>
@@ -112,6 +161,10 @@ namespace GestaoDeRestaurante.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Descricao")
+                        .HasMaxLength(300)
+                        .HasColumnType("nvarchar(300)");
 
                     b.Property<string>("Nome")
                         .IsRequired()
@@ -382,9 +435,6 @@ namespace GestaoDeRestaurante.Migrations
             modelBuilder.Entity("GestaoDeRestaurante.Models.AtendimentoDeliveryProprio", b =>
                 {
                     b.HasBaseType("GestaoDeRestaurante.Models.Atendimento");
-
-                    b.Property<string>("ObservacaoEntrega")
-                        .HasColumnType("nvarchar(max)");
 
                     b.HasDiscriminator().HasValue("AtendimentoDeliveryProprio");
                 });

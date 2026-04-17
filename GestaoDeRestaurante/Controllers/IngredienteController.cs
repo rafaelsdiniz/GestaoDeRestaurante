@@ -1,3 +1,4 @@
+using GestaoDeRestaurante.DTOs.Ingrediente;
 using GestaoDeRestaurante.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -17,11 +18,11 @@ namespace GestaoDeRestaurante.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CriarIngrediente([FromBody] string nome)
+        public async Task<IActionResult> CriarIngrediente([FromBody] IngredienteRequestDTO dto)
         {
             try
             {
-                return Ok(await _service.CriarIngrediente(nome));
+                return Ok(await _service.CriarIngrediente(dto));
             }
             catch (Exception ex)
             {
@@ -56,11 +57,11 @@ namespace GestaoDeRestaurante.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> AtualizarIngrediente(int id, [FromBody] string nome)
+        public async Task<IActionResult> AtualizarIngrediente(int id, [FromBody] IngredienteRequestDTO dto)
         {
             try
             {
-                return Ok(await _service.AtualizarIngrediente(id, nome));
+                return Ok(await _service.AtualizarIngrediente(id, dto));
             }
             catch (Exception ex)
             {
